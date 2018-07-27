@@ -32,36 +32,6 @@ class SongsController < ApplicationController
     redirect "songs/#{@song.slug}"
   end
 
-  post "/songs" do
-    artist_name = params[:artist_name]
-    song_name = params[:song_name]
-
-    if artist_name.empty? || song_name.empty?
-      redirect "/songs/failure"
-    else
-      #binding.pry
-      artist = Artist.find_by(name: artist_name)
-      song = Song.find_by(name: params[:song_name])
-      if artist.nil?
-        @new_artist = Artist.create(name: params[:artist_name])
-        @new_song = Song.create(name: params[:song_name])
-        @new_song.artist = @new_artist.name
-        @new_artist.songs << @new_song
-        @new_artist.save
-        @new_song.save
-      else
-        song = Song.find_by(name: params[:song_name])
-        if song.nil?
-          @new_song = Song.create(name: params[:song_name])
-          @new_song.artist = artist
-          @new_song.save
-        end
-      end
-    end
-
-    redirect "songs/#{@new_song.slug}"
-  end
-
   get "/songs/:slug/edit" do
     @song = Song.find_by_slug(params[:slug])
     erb :"songs/edit"
